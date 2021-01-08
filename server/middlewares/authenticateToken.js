@@ -1,4 +1,6 @@
 
+const jwt = require("jsonwebtoken");
+
 module.exports = async function (req, res, next) {
   try {
     const authHeader = req.headers['authorization']
@@ -10,6 +12,7 @@ module.exports = async function (req, res, next) {
       next()
     })
   } catch(error) {
+    console.log(error)
     return res.sendStatus(500)
   }
 }

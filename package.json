@@ -7,7 +7,6 @@
     "dev": "concurrently --kill-others-on-fail \"npm server\" \"npm client\""
   },
   "dependencies": {
-    "@tailwindcss/forms": "^0.2.1",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "dotenv": "^8.2.0",

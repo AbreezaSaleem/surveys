@@ -1,55 +1,84 @@
-import React from 'react';
-import { useHistory } from "react-router-dom";
-import { api } from '../utils';
+import React, { useState, useEffect } from 'react';
+import useRegister from '../apis/mutations/useRegister'
 
-function Register(props) {
-  const history = useHistory();
+/**
+ * user already exists.
+ */
+
+function Register() {
+  const [ errorMessage, setErrorMessage ] = useState('')
+  const { mutate: register, error, isError } = useRegister()
+
+  useEffect(() => {
+    if(isError) {
+      const { response: { data: { message = '' } } } = error
+      setErrorMessage(message)
+    }
+  }, [error])
 
   async function registerUser(event) {
     event.preventDefault();
-    const { target: { elements: { email, psw, pswRepeat } } } = event
-    if(pswRepeat.value !== psw.value) {
+    setErrorMessage('')
+    const { target: { elements: { email, password, pswRepeat } } } = event
+    if(pswRepeat.value !== password.value) {
       alert("Please enter the same passwords")
       return
     }
-    const token = await api('register', {
-      method: "POST",
-      body: JSON.stringify({
-        email: email.value,
-        password: psw.value
-      })
+    register({
+      email: email.value,
+      password: password.value
     })
-    localStorage.setItem('token', token);
-    
-    history.push("/");
   }
 
   return (
-    <div>
-      <form onSubmit={registerUser}>
-        <div className="container">
-          <h1>Register</h1>
-          <p>Please fill in this form to create an account.</p>
-          <hr />
-
-          <label htmlFor="email"><b>Email</b></label>
-          <input type="text" placeholder="Enter Email" name="email" id="email" required />
-
-          <label htmlFor="psw"><b>Password</b></label>
-          <input type="password" placeholder="Enter Password" name="psw" id="psw" required />
-
-          <label htmlFor="pswRepeat"><b>Repeat Password</b></label>
-          <input type="password" placeholder="Repeat Password" name="pswRepeat" id="pswRepeat" required />
-          <hr />
-
-          <p>By creating an account you agree to our <br/><a target="_blank" href="https://www.bayt.com/en/pages/terms/">Terms & Conditions</a></p>
-          <button type="submit" className="registerbtn">Register</button>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <img className="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow" />
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            New to Surveys? Sign up here!
+          </h2>
         </div>
+        <form className="mt-8 space-y-6" onSubmit={registerUser}>
+          <input type="hidden" name="remember" value="true" />
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="email-address" className="my-3 block text-sm font-medium text-gray-700">Email</label>
+              <input id="email-address" name="email" type="email" autoComplete="email" required className="rounded appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Email address" />
+            </div>
+            <div>
+              <label htmlFor="password" className="my-3 block text-sm font-medium text-gray-700">New Password</label>
+              <input id="password" name="password" type="password" autoComplete="password" required className="rounded appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password" />
+            </div>
+            <div>
+              <label htmlFor="pswRepeat" className="my-3 block text-sm font-medium text-gray-700">Repeat Password</label>
+              <input id="pswRepeat" name="pswRepeat" type="password" autoComplete="repeat-password" required className="rounded appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Repeat Password" />
+            </div>
+          </div>
 
-        <div className="container signin">
-          <p>Already have an account? <a href="/login">Sign in</a>.</p>
-        </div>
-      </form>
+          <div>
+            <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                <svg className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                </svg>
+              </span>
+              Sign Up
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {errorMessage && (<div className="text-red-700 text-sm mt-6">
+        {errorMessage}
+      </div>)}
+
+      <div className="text-sm mt-6">
+        Already have an account?
+        <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+          &nbsp; Sign In
+        </a>
+      </div>
     </div>
   );
 }
