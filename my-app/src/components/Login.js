@@ -1,34 +1,22 @@
 import React, { useState } from 'react';
-import { useHistory } from "react-router-dom";
-import axios from 'axios';
-import { useMutation, useQueryClient } from 'react-query';
+import useLogin from '../apis/mutations/useLogin';
 
 function Login() {
   const [ errorMessage, setErrorMessage ] = useState('')
-  const queryClient = useQueryClient()
-  const history = useHistory();
-  const { mutate, data, error } = useMutation(async (values) => {
-    return axios.post('/login', values)
-  }, {
-    onSuccess: (data, error, variables, context) => {
-    localStorage.setItem('token', data.data)
-      history.push("/")
-    },
-    onError: (error) => {
-      const { response: { data: { message = '' } } } = error
-      setErrorMessage(message)
-    },
-  })
+  const [login, { error, isError }] = useLogin()
+
 
   async function loginUserHandler(event) {
     event.preventDefault();
     setErrorMessage('')
     const { target: { elements: { email, psw } } } = event
-    mutate({
+    login({
       email: email.value,
       password: psw.value
     })
   }
+
+  console.log('ummm', login, error, isError)
 
   return (
     <div className="container">

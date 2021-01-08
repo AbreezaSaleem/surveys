@@ -1,4 +1,3 @@
-import './App.css';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from 'react-query'
 import Register from './components/Register';

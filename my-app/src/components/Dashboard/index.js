@@ -2,7 +2,6 @@ import React, { useState, useEffect, } from 'react';
 
 import Navbar from '../shared/Navbar'
 import SurveyList from './SurveyList.js'
-import './Dashboard.css'
 
 import { api, parseJwt } from '../../utils';
 
